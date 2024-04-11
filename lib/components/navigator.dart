@@ -30,6 +30,7 @@ class _NavigatorPageState extends State<NavigatorPage> {
         unselectedItemColor: Colors.grey,
         backgroundColor: Colors.white,
         currentIndex: _currentIndex,
+        type: BottomNavigationBarType.fixed,
         onTap: (index) {
           setState(() {
             _currentIndex = index;

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lion_flutter/frames/home.dart';
+import 'package:lion_flutter/frames/home/home.dart';
 import 'package:lion_flutter/frames/profile.dart';
 import 'package:lion_flutter/frames/schedule.dart';
 import 'package:lion_flutter/frames/inbox.dart';

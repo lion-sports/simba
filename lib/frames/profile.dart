@@ -25,7 +25,7 @@ class _ProfileState extends State<Profile> {
     {
       'title': 'Refer a Friend',
       'icon': Icons.person_add,
-      'page':  ReferFriend()
+      'page': ReferFriend()
     },
   ];
 
@@ -74,14 +74,6 @@ class _ProfileState extends State<Profile> {
                       ),
                     ),
                     const SizedBox(height: 16),
-                    ElevatedButton(
-                      onPressed: () {
-                        // Add logout functionality here
-                        Navigator.pop(
-                            context); // Navigate back to the previous screen
-                      },
-                      child: const Text('Logout'),
-                    ),
                     const SizedBox(height: 16),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,

@@ -42,9 +42,9 @@ class LoginPageUI extends StatelessWidget {
                 );
               },
               style: ElevatedButton.styleFrom(
-                primary: Colors.blue,
+                backgroundColor: Colors.amberAccent,
                 elevation: 5,
-                padding: EdgeInsets.symmetric(vertical: 15),
+                padding: const EdgeInsets.symmetric(vertical: 15),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10.0),
                 ),
@@ -67,9 +67,9 @@ class LoginPageUI extends StatelessWidget {
                 );
               },
               style: ElevatedButton.styleFrom(
-                primary: Colors.black,
+                backgroundColor: Colors.amberAccent,
                 elevation: 5,
-                padding: EdgeInsets.symmetric(vertical: 15),
+                padding: const EdgeInsets.symmetric(vertical: 15),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10.0),
                 ),
@@ -83,7 +83,7 @@ class LoginPageUI extends StatelessWidget {
                 ),
               ),
             ),
-            const SizedBox(height: 20.0),
+            const SizedBox(height: 320.0),
             ElevatedButton(
               onPressed: () {
                 Navigator.push(
@@ -92,15 +92,15 @@ class LoginPageUI extends StatelessWidget {
                 );
               },
               style: ElevatedButton.styleFrom(
-                primary: Colors.grey,
+                backgroundColor: Colors.grey,
                 elevation: 5,
-                padding: EdgeInsets.symmetric(vertical: 15),
+                padding: const EdgeInsets.symmetric(vertical: 15),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10.0),
                 ),
               ),
               child: const Text(
-                'Login without Wallet',
+                'Start',
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,

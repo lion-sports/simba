@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lion_flutter/frames/home/home.dart';
 import 'package:lion_flutter/frames/profile.dart';
-import 'package:lion_flutter/frames/schedule.dart';
+import 'package:lion_flutter/frames/schedule/schedule.dart';
 import 'package:lion_flutter/frames/inbox.dart';
 import 'package:lion_flutter/frames/store.dart';
 
@@ -39,7 +39,7 @@ class _NavigatorPageState extends State<NavigatorPage> {
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
           BottomNavigationBarItem(
-              icon: Icon(Icons.schedule), label: 'Schedule'),
+              icon: Icon(Icons.event_repeat), label: 'Teams'),
           BottomNavigationBarItem(icon: Icon(Icons.inbox), label: 'Inbox'),
           BottomNavigationBarItem(icon: Icon(Icons.store), label: 'Store'),
           BottomNavigationBarItem(

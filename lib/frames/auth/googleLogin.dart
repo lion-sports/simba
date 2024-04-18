@@ -1,7 +1,7 @@
-import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+
 import 'package:lion_flutter/components/navigator.dart';
 
 class LoginGoogle extends StatelessWidget {

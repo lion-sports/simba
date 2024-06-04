@@ -32,11 +32,11 @@ class _ProfileState extends State<Profile> {
   @override
   Widget build(BuildContext context) {
     final List<String> images = [
-      '../static/img_1.jpg',
-      '../static/img_2.jpg',
-      '../static/img_3.jpg',
-      '../static/img_4.jpg',
-      '../static/img_5.jpg',
+      'assets/static/img_1.jpg',
+      'assets/static/img_2.jpg',
+      'assets/static/img_3.jpg',
+      'assets/static/img_4.jpg',
+      'assets/static/img_5.jpg',
     ];
 
     return Scaffold(
@@ -49,7 +49,7 @@ class _ProfileState extends State<Profile> {
             flexibleSpace: FlexibleSpaceBar(
               title: const Text('Filippo Passalacqua'),
               background: Image.asset(
-                '../static/img_3.jpg',
+                'assets/static/img_3.jpg',
                 fit: BoxFit.cover,
               ),
             ),
@@ -63,7 +63,7 @@ class _ProfileState extends State<Profile> {
                   children: [
                     const CircleAvatar(
                       radius: 50,
-                      backgroundImage: AssetImage('../static/img_2.jpg'),
+                      backgroundImage: AssetImage('assets/static/img_2.jpg'),
                     ),
                     const SizedBox(height: 16),
                     const Text(

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:lion_flutter/frames/profile.dart';
 import 'package:lion_flutter/frames/settings.dart';
+import 'package:lion_flutter/select_exercise.dart';
 
 class Home  extends StatefulWidget {
    const Home({super.key,required this.title});
@@ -57,16 +58,16 @@ class _HomeState extends State<Home> {
                 aspectRatio: 2.0,
               ),
               items: [
-                Image.network(
-                  '../static/img_1.jpg',
+                Image.asset(
+                  'assets/static/img_1.jpg',
                   fit: BoxFit.cover,
                 ),
-                Image.network(
-                  '../static/img_3.jpg',
+                Image.asset(
+                  'assets/static/img_3.jpg',
                   fit: BoxFit.cover,
                 ),
-                Image.network(
-                  '../static/img_5.jpg',
+                Image.asset(
+                  'assets/static/img_5.jpg',
                   fit: BoxFit.cover,
                 ),
               ],
@@ -84,6 +85,18 @@ class _HomeState extends State<Home> {
                 // Handle button press for tracking progress
               },
               child: const Text('Track Progress'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context, 
+                  MaterialPageRoute(
+                    builder: (context) => ExerciseSelectionPage(),
+                  ),
+                );
+                // Handle button press for tracking progress
+              },
+              child: const Text('Track Exercise'),
             ),
             const SizedBox(height: 10),
             ElevatedButton(

@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:ffi';
 import 'package:http/http.dart' as http;
 import '../utility/global.dart';
 
@@ -11,7 +12,7 @@ class APIConnector {
   Future<String> get(
       String webMethod, List<ServiceParameter> parameters) async {
     String result;
-    print('POST API');
+    print('GET API');
 
     try {
       final uri = Uri.parse(baseUrl + webMethod);
@@ -23,10 +24,10 @@ class APIConnector {
       if (response.statusCode == 200) {
         result = utf8.decode(response.bodyBytes);
       } else {
-        throw Exception('Failed to load data from API');
+        throw Exception('Failed to load data from GET API');
       }
     } catch (e) {
-      throw Exception('Failed to load data from API');
+      throw Exception('Failed to load data from GET API');
     }
     return result;
   }

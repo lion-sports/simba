@@ -14,7 +14,7 @@ class _NavigatorPageState extends State<NavigatorPage> {
   int _currentIndex = 0;
 
   final List<Widget> _pages = [
-    const Home(title: "Lion"),
+    //const Home(title: "Lion"),
     const Schedule(title: "Lion"),
     Inbox(),
     Store(),

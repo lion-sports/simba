@@ -1,25 +1,20 @@
+import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 import 'package:lion_flutter/components/navigator.dart';
+import 'package:lion_flutter/services/auth/auth.service.dart';
 
 class LoginGoogle extends StatelessWidget {
   final GoogleSignIn googleSignIn = GoogleSignIn();
 
-  Future<void> _handleSignIn(BuildContext context) async {
-    try {      
-      await googleSignIn.signIn();
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => NavigatorPage()),
-      );
-    } catch (error) {
-      print('Google Sign-In Error: $error');
-      // Handle sign-in error here
-    }
+  _handleSignIn() async {
+    print("sono dentro handleSignIn()");
+    var result =  AuthService.signupGoogle();
+    print("dentro googleLogin: " + result.toString());
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -28,7 +23,7 @@ class LoginGoogle extends StatelessWidget {
       ),
       body: Center(
         child: ElevatedButton(
-          onPressed: () => _handleSignIn(context),
+          onPressed: () => _handleSignIn(),
           child: const Text('Login with Google'),
         ),
       ),

@@ -33,17 +33,17 @@ class _CustomDrawerState extends State<CustomDrawer> {
                 ),
               ),
             ),
-            ListTile(
-              leading: const Icon(Icons.home),
-              title: const Text('Home'),
-              onTap: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => const Home(title: "Lion"),
-                  ),
-                );// Handle home page navigation
-              },
-            ),
+            // ListTile(
+            //   leading: const Icon(Icons.home),
+            //   title: const Text('Home'),
+            //   onTap: () {
+            //     Navigator.of(context).push(
+            //       MaterialPageRoute(
+            //         builder: (context) => const Home(title: "Lion"),
+            //       ),
+            //     );// Handle home page navigation
+            //   },
+            // ),
             ListTile(
               leading: const Icon(Icons.account_circle),
               title: const Text('Profile'),
@@ -61,7 +61,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
               onTap: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: (context) => const Settings(),
+                    builder: (context) => const Settings(selectedLevelSettings: ''),
                   ),
                 );// Handle home page navigation
               }

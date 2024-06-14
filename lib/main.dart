@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:lion_flutter/theme_notifier.dart';
+import 'package:lion_flutter/frames/mission/mission_page.dart';
+
 //import 'package:lion_flutter/frames/auth/login.dart';
-import 'package:lion_flutter/frames/home/home.dart';
+
 
 
 // Future main() async {
@@ -8,22 +12,26 @@ import 'package:lion_flutter/frames/home/home.dart';
 //   runApp(LoginPage());
 // }
 
-
 void main() {
-  runApp(const lionApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (_) => ThemeNotifier(),
+      child: const LionApp(),
+    ),
+  );
 }
 
-class lionApp extends StatelessWidget {
-  const lionApp({super.key});
+class LionApp extends StatelessWidget {
+  const LionApp({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final themeNotifier = Provider.of<ThemeNotifier>(context);
+
     return MaterialApp(
       title: 'Lion App',
-      theme: ThemeData(
-        primarySwatch: Colors.blue
-      ),
-      home: const Home(title: 'Benvenuto in Lion'),
+      theme: themeNotifier.isDarkMode ? ThemeData.dark() : ThemeData.light(),
+      home: MissionPage(),
     );
   }
 }

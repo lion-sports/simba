@@ -32,15 +32,17 @@ class APIConnector {
   }
 
   Future<String> post(
-      String webMethod, List<ServiceParameter> parameters) async {
+      String webMethod, List<ServiceParameter>? parameters) async {
     print('POST API');
     String result;
     try {
       final uri = Uri.parse(baseUrl + webMethod);
       print(uri);
-      final response = await http
-          .post(uri.replace(queryParameters: _buildQueryParameters(parameters)));
-      print(response);
+
+      final response;
+      if(parameters != null)
+       response = await http.post(uri.replace(queryParameters: _buildQueryParameters(parameters)));
+      else response = await http.post(uri);
 
       if (response.statusCode == 200) {
         result = utf8.decode(response.bodyBytes);

@@ -29,8 +29,8 @@ class _LoginPageState extends State<LoginPage> {
     String username = 'filippo.passalacqua@likablehair.it';
     String password = '5ttkbidv';
 
-    var result =  AuthService.login(username, password);
-    print(result);
+    //var result =  AuthService.login(username, password);
+    //print(result);
   }
 
   @override

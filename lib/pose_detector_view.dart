@@ -1,6 +1,7 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mlkit_pose_detection/google_mlkit_pose_detection.dart';
+import 'dart:async';
 import 'dart:math' as math;
 import 'detector_view.dart';
 import 'painters/pose_painter.dart';
@@ -16,7 +17,7 @@ class PoseDetectorView extends StatefulWidget {
 
 class _PoseDetectorViewState extends State<PoseDetectorView> {
   final PoseDetector _poseDetector = PoseDetector(options: PoseDetectorOptions());
-  bool _canProcess = true;
+  bool _canProcess = false; // Initially false to prevent processing before countdown
   bool _isBusy = false;
   CustomPaint? _customPaint;
   String? _text;
@@ -25,12 +26,65 @@ class _PoseDetectorViewState extends State<PoseDetectorView> {
   // Variables for exercise counting
   int _count = 0;
   bool _isInDownPosition = false;
+  late Stopwatch _stopwatch;
+  Timer? _countdownTimer;
 
   @override
-  void dispose() async {
+  void initState() {
+    super.initState();
+    _stopwatch = Stopwatch();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _showCountdownDialog());
+  }
+
+  @override
+  void dispose() {
     _canProcess = false;
     _poseDetector.close();
+    _countdownTimer?.cancel();
     super.dispose();
+  }
+
+  void _showCountdownDialog() {
+    _startExercise();
+    // int countdown = 3;
+
+    // showDialog(
+    //   context: context,
+    //   barrierDismissible: false,
+    //   builder: (BuildContext context) {
+    //     return StatefulBuilder(
+    //       builder: (BuildContext statefulBuilderContext, StateSetter setState) {
+    //         _countdownTimer = Timer.periodic(Duration(seconds: 1), (Timer timer) {
+    //           if (countdown == 1) {
+    //             print(context);
+    //             Navigator.of(statefulBuilderContext).pop(true);
+    //             timer.cancel();
+    //             _startExercise();
+    //           } else {
+    //             setState(() {
+    //               countdown--;
+    //             });
+    //           }
+    //         });
+    //         return AlertDialog(
+    //           title: Text("Get Ready!", textAlign: TextAlign.center),
+    //           content: Text(
+    //             "$countdown",
+    //             style: TextStyle(fontSize: 48, fontWeight: FontWeight.bold),
+    //             textAlign: TextAlign.center,
+    //           ),
+    //         );
+    //       },
+    //     );
+    //   },
+    // );
+  }
+
+  void _startExercise() {
+    setState(() {
+      _canProcess = true;
+    });
+    _stopwatch.start();
   }
 
   @override
@@ -38,6 +92,7 @@ class _PoseDetectorViewState extends State<PoseDetectorView> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Pose Detector'),
+        backgroundColor: Colors.deepPurple,
       ),
       body: Stack(
         children: [
@@ -52,9 +107,19 @@ class _PoseDetectorViewState extends State<PoseDetectorView> {
           Positioned(
             top: 50,
             left: 20,
-            child: Text(
-              'Count: $_count',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  'Count: $_count',
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white),
+                ),
+                SizedBox(width: 20),
+                Text(
+                  'Time: ${_stopwatch.elapsed.inSeconds}s',
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white),
+                ),
+              ],
             ),
           ),
         ],
@@ -99,7 +164,7 @@ class _PoseDetectorViewState extends State<PoseDetectorView> {
 
   void _countPushUps(List<Pose> poses) {
     for (Pose pose in poses) {
-      // tengo traccia delle spalle, gomiti, polsi dx e sx
+      // Keep track of shoulders, elbows, and wrists for both left and right
       final leftShoulder = pose.landmarks[PoseLandmarkType.leftShoulder];
       final rightShoulder = pose.landmarks[PoseLandmarkType.rightShoulder];
       final leftElbow = pose.landmarks[PoseLandmarkType.leftElbow];
@@ -111,28 +176,63 @@ class _PoseDetectorViewState extends State<PoseDetectorView> {
         final leftElbowAngle = calculateAngle(leftShoulder, leftElbow, leftWrist);
         final rightElbowAngle = calculateAngle(rightShoulder, rightElbow, rightWrist);
 
-        // Usa gli angoli per determinare la posizione
-        // < 90 bosizione "in basso"
+        // Use angles to determine position
         if (!_isInDownPosition && leftElbowAngle < 90 && rightElbowAngle < 90) {
           _isInDownPosition = true;
-          // > 160 posizione "in alto"
         } else if (_isInDownPosition && leftElbowAngle > 160 && rightElbowAngle > 160) {
           _count++;
           _isInDownPosition = false;
+        }
+        if (_count == 5) {
+          _showSuccessDialog();
         }
       }
     }
   }
 
+  void _showSuccessDialog() {
+    _stopwatch.stop();
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Row(
+            children: [
+              Icon(Icons.check_circle, color: Colors.green),
+              SizedBox(width: 10),
+              Text("Good Job!"),
+            ],
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text("You completed 5 pushups!"),
+              Text("Exercise: ${widget.exerciseType}"),
+              Text("Time: ${_stopwatch.elapsed.inSeconds}s"),
+            ],
+          ),
+          actions: [
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.of(context).pop(); // Go back to the previous page
+              },
+              child: Text("OK"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   double calculateAngle(PoseLandmark firstLandmark, PoseLandmark midLandmark, PoseLandmark lastLandmark) {
-    //caldolo l'angono in radianti
+    // Calculate angle in radians
     double radians = math.atan2(lastLandmark.y - midLandmark.y, lastLandmark.x - midLandmark.x) -
         math.atan2(firstLandmark.y - midLandmark.y, firstLandmark.x - midLandmark.x);
 
-    //l'angono in radianti viene convertito in gradi
+    // Convert radians to degrees
     double degrees = radians * 180.0 / math.pi;
     degrees = degrees.abs();
-    //se l'angolo è > 180
     if (degrees > 180.0) {
       degrees = 360.0 - degrees;
     }

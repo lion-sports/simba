@@ -8,18 +8,11 @@ class APIConnector {
 
   APIConnector(baseUrl);
 
-  Future<String> get(
-      String webMethod, List<ServiceParameter> parameters) async {
+  Future<String> get(String webMethod, List<ServiceParameter> parameters) async {
     String result;
-    print('POST API');
-
     try {
       final uri = Uri.parse(baseUrl + webMethod);
-      print(uri);
-      final response = await http
-          .get(uri.replace(queryParameters: _buildQueryParameters(parameters)));
-      print(response);
-
+      final response = await http.get(uri.replace(queryParameters: _buildQueryParameters(parameters)));
       if (response.statusCode == 200) {
         result = utf8.decode(response.bodyBytes);
       } else {
@@ -31,18 +24,17 @@ class APIConnector {
     return result;
   }
 
-  Future<String> post(
-      String webMethod, List<ServiceParameter>? parameters) async {
-    print('POST API');
+  Future<String> post(String webMethod, List<ServiceParameter>? parameters) async {
     String result;
     try {
       final uri = Uri.parse(baseUrl + webMethod);
-      print(uri);
-
       final response;
-      if(parameters != null)
-       response = await http.post(uri.replace(queryParameters: _buildQueryParameters(parameters)));
-      else response = await http.post(uri);
+
+      if (parameters != null) {
+        response = await http.post(uri.replace(queryParameters: _buildQueryParameters(parameters)));
+      } else {
+        response = await http.post(uri);
+      }
 
       if (response.statusCode == 200) {
         result = utf8.decode(response.bodyBytes);
@@ -70,3 +62,4 @@ class ServiceParameter {
 
   ServiceParameter(this.parameterName, this.parameterValue);
 }
+

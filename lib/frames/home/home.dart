@@ -4,7 +4,7 @@ import 'package:lion_flutter/frames/profile.dart';
 import 'package:lion_flutter/frames/settings.dart';
 import 'package:lion_flutter/select_exercise.dart';
 import 'package:lion_flutter/pose_detector_view.dart';
-import 'package:lion_flutter/frames/auth/googleLogin.dart';
+import 'package:lion_flutter/frames/auth/auth_login.dart';
 import 'package:provider/provider.dart';
 import 'package:lion_flutter/theme_notifier.dart';
 
@@ -46,7 +46,7 @@ class _HomeState extends State<Home> {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => LoginGoogle(),
+          builder: (context) => LoginPage(),
         ),
       );
     } else if (index == 2) {

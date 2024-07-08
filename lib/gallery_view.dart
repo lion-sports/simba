@@ -139,7 +139,7 @@ class _GalleryViewState extends State<GalleryView> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
+                  const Text(
                     'Select image',
                     style: TextStyle(fontSize: 20),
                   ),

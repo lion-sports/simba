@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:lion_flutter/theme_notifier.dart';
-import 'package:lion_flutter/frames/auth/googleLogin.dart';
+import 'package:lion_flutter/frames/auth/google_login.dart';
 import 'package:lion_flutter/frames/home/home.dart';
 import 'package:lion_flutter/frames/settings.dart';
 import 'package:lion_flutter/frames/profile.dart';

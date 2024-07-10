@@ -1,20 +1,88 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:lion_flutter/theme_notifier.dart';
+import 'package:lion_flutter/frames/auth/google_login.dart';
+import 'package:lion_flutter/frames/home/home.dart';
+import 'package:lion_flutter/frames/settings.dart';
+import 'package:lion_flutter/frames/profile.dart';
 
 
-class Settings  extends StatefulWidget {
-  const Settings({super.key});
- @override
+
+class Settings extends StatefulWidget {
+  final String selectedLevelSettings;
+  const Settings({super.key, required this.selectedLevelSettings});
+
+  @override
   State<Settings> createState() => _SettingsState();
 }
 
 class _SettingsState extends State<Settings> {
   @override
-
-   @override
   Widget build(BuildContext context) {
+    final themeNotifier = Provider.of<ThemeNotifier>(context);
+    int _selectedIndex = 0;
+
+    void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+
+    // Navigate to different pages based on the selected index
+    if (index == 0) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => Home(title: 'Home', selectedLevel: widget.selectedLevelSettings),
+        ),
+      );
+    } else if (index == 1) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => LoginGoogle(),
+        ),
+      );
+    } else if (index == 2) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => Settings(selectedLevelSettings: widget.selectedLevelSettings),
+        ),
+      );
+    } else if (index == 3) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => Profile(title: 'Profile'),
+        ),
+      );
+    }
+  }
+
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Settings'),
+      // appBar: AppBar(
+      //   title: const Text('Settings'),
+      // ),
+      bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        items: <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home, color: Theme.of(context).textTheme.headlineLarge?.color),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.fitness_center, color:  Theme.of(context).textTheme.headlineLarge?.color),
+            label: 'Exercises',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.settings, color: Theme.of(context).textTheme.headlineLarge?.color),
+            label: 'Settings',
+          ),
+        ],
+        currentIndex: _selectedIndex,
+        selectedItemColor: Colors.teal,
+        unselectedItemColor: Theme.of(context).textTheme.headlineLarge?.color,
+        onTap: _onItemTapped,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -32,9 +100,9 @@ class _SettingsState extends State<Settings> {
             ListTile(
               title: const Text('Dark Mode'),
               trailing: Switch(
-                value: true, // Replace with your actual dark mode state
+                value: themeNotifier.isDarkMode,
                 onChanged: (value) {
-                  // Add logic to toggle dark mode
+                  themeNotifier.toggleTheme();
                 },
               ),
             ),
@@ -62,7 +130,7 @@ class _SettingsState extends State<Settings> {
               },
             ),
             ListTile(
-              title:  const Text('Logout'),
+              title: const Text('Logout'),
               trailing: const Icon(Icons.arrow_forward),
               onTap: () {
                 // Add logout functionality

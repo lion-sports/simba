@@ -1,4 +1,5 @@
 import 'dart:convert'; // required to encode/decode json data
+import 'dart:developer';
 import 'package:lion_flutter/services/apiConnector.dart';
 import 'package:lion_flutter/utility/global.dart';
 
@@ -59,7 +60,7 @@ class Team {
 
       return body.map((e) => Team.fromJson(e)).toList();
     } catch (e) {
-      print('Error fetching teams: $e');
+      log('Error fetching teams: $e');
       throw Exception('Failed to load teams');
     }
   }

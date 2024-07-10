@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lion_flutter/frames/auth/googleLogin.dart';
+import 'package:lion_flutter/frames/auth/google_login.dart';
 import 'package:lion_flutter/frames/auth/lionLogin.dart';
 import 'package:lion_flutter/frames/auth/metamaskLogin.dart';
 import 'package:lion_flutter/components/navigator.dart';

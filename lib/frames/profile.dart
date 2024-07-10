@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Profile extends StatefulWidget {
   const Profile({Key? key, required this.title}) : super(key: key);
@@ -29,28 +30,61 @@ class _ProfileState extends State<Profile> {
     },
   ];
 
+  
+  String username = '';
+  String solanaPublicKey = '';
+
+  Future<void> _loadUser() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      username = prefs.getString('username') ?? 'username-default';
+      solanaPublicKey = prefs.getString('solanaPublicKey') ?? 'solanaPublicKey-default';
+    });
+  }
+
+
+ @override
+  void initState() {
+    super.initState();
+    _loadUser();
+  }
+
   @override
   Widget build(BuildContext context) {
     final List<String> images = [
-      '../static/img_1.jpg',
-      '../static/img_2.jpg',
-      '../static/img_3.jpg',
-      '../static/img_4.jpg',
-      '../static/img_5.jpg',
+      'assets/static/img_1.jpg',
+      'assets/static/img_2.jpg',
+      'assets/static/img_3.jpg',
+      'assets/static/img_4.jpg',
+      'assets/static/img_5.jpg',
     ];
 
     return Scaffold(
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
-            expandedHeight: 250,
+            expandedHeight: 300,
             floating: false,
             pinned: true,
             flexibleSpace: FlexibleSpaceBar(
-              title: const Text('Filippo Passalacqua'),
-              background: Image.asset(
-                '../static/img_3.jpg',
-                fit: BoxFit.cover,
+              title: Text(username),
+              background: Stack(
+                fit: StackFit.expand,
+                children: [
+                  Image.asset(
+                    'assets/static/img_3.jpg',
+                    fit: BoxFit.cover,
+                  ),
+                  Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [Colors.black.withOpacity(0.6), Colors.transparent],
+                        begin: Alignment.bottomCenter,
+                        end: Alignment.topCenter,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
@@ -63,24 +97,25 @@ class _ProfileState extends State<Profile> {
                   children: [
                     const CircleAvatar(
                       radius: 50,
-                      backgroundImage: AssetImage('../static/img_2.jpg'),
+                      backgroundImage: AssetImage('assets/static/img_2.jpg'),
                     ),
                     const SizedBox(height: 16),
                     const Text(
                       'Basketball player',
                       style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.grey,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
                     const SizedBox(height: 16),
-                    const SizedBox(height: 16),
+                    const Divider(),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: _items.map((item) {
                         return ListTile(
                           leading: Icon(item['icon']),
                           title: Text(item['title']),
+                          trailing: const Icon(Icons.arrow_forward_ios),
                           onTap: () {
                             Navigator.push(
                               context,
@@ -91,37 +126,38 @@ class _ProfileState extends State<Profile> {
                         );
                       }).toList(),
                     ),
-                  ],
-                ),
-              ),
-              Container(
-                padding: const EdgeInsets.all(16),
-                child: const Text(
-                  'My Photos',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-              SizedBox(
-                height: 200,
-                child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: images.length,
-                  itemBuilder: (context, index) {
-                    return Container(
-                      margin: const EdgeInsets.all(8),
-                      width: 150,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        image: DecorationImage(
-                          image: AssetImage(images[index]),
-                          fit: BoxFit.cover,
+                    const Divider(),
+                    const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 16.0),
+                      child: Text(
+                        'My Photos',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
-                    );
-                  },
+                    ),
+                    SizedBox(
+                      height: 150,
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: images.length,
+                        itemBuilder: (context, index) {
+                          return Container(
+                            margin: const EdgeInsets.all(8),
+                            width: 150,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              image: DecorationImage(
+                                image: AssetImage(images[index]),
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ]),
@@ -179,10 +215,10 @@ class ReferFriend extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Collect your ReferFriend'),
+        title: const Text('Refer a Friend'),
       ),
       body: const Center(
-        child: Text('Collect your ReferFriend Page'),
+        child: Text('Refer a Friend Page'),
       ),
     );
   }

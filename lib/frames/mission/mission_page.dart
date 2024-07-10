@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:lion_flutter/frames/home/home.dart';
@@ -19,7 +21,7 @@ class _MissionPageState extends State<MissionPage> {
 
   void _onLevelSelected() {
     String selectedLevel = levels[_current];
-    print(selectedLevel);
+    log(selectedLevel);
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -59,7 +61,7 @@ class _MissionPageState extends State<MissionPage> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text(
+                        const Text(
                           'Push Yourself Harder to',
                           textAlign: TextAlign.center,
                           style: TextStyle(
@@ -71,7 +73,7 @@ class _MissionPageState extends State<MissionPage> {
                         Text(
                           'Become ${levels[_current]}',
                           textAlign: TextAlign.center,
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontSize: 32,
                             fontWeight: FontWeight.bold,
                             color: Colors.tealAccent,
@@ -103,7 +105,7 @@ class _MissionPageState extends State<MissionPage> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 IconButton(
-                  icon: Icon(Icons.arrow_back, color: Colors.white),
+                  icon: const Icon(Icons.arrow_back, color: Colors.white),
                   onPressed: () {
                     _controller.previousPage();
                   },
@@ -112,13 +114,13 @@ class _MissionPageState extends State<MissionPage> {
                   onPressed: _onLevelSelected,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.teal,
-                    padding: EdgeInsets.symmetric(horizontal: 40, vertical: 20),
-                    textStyle: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
+                    textStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
-                  child: Text('Select Level'),
+                  child: const Text('Select Level'),
                 ),
                 IconButton(
-                  icon: Icon(Icons.arrow_forward, color: Colors.white),
+                  icon: const Icon(Icons.arrow_forward, color: Colors.white),
                   onPressed: () {
                     _controller.nextPage();
                   },
@@ -138,7 +140,7 @@ class _MissionPageState extends State<MissionPage> {
                   child: Container(
                     width: 12.0,
                     height: 12.0,
-                    margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 4.0),
+                    margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 4.0),
                     // decoration: BoxDecoration(
                     //   shape: BoxShape.circle,
                     //   color: (Theme.of(context).brightness == Brightness.dark

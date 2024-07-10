@@ -6,13 +6,10 @@ import 'package:lion_flutter/frames/auth/auth_login.dart';
 import 'package:lion_flutter/frames/auth/auth_signup.dart';
 import 'package:lion_flutter/frames/home/home.dart';
 
-
 //import 'package:lion_flutter/frames/auth/login.dart';
 
-
-
 // Future main() async {
-  
+
 //   runApp(LoginPage());
 // }
 
@@ -39,7 +36,7 @@ class LionApp extends StatelessWidget {
       routes: {
         '/login': (context) => LoginPage(),
         '/signup': (context) => SignUpPage(),
-        '/home': (context) => MissionPage(),
+        '/home': (context) => const Home(title: 'Home', selectedLevel: 'Easy'),
       },
     );
   }

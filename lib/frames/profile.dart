@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Profile extends StatefulWidget {
   const Profile({Key? key, required this.title}) : super(key: key);
@@ -29,6 +30,25 @@ class _ProfileState extends State<Profile> {
     },
   ];
 
+  
+  String username = '';
+  String solanaPublicKey = '';
+
+  Future<void> _loadUser() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      username = prefs.getString('username') ?? 'username-default';
+      solanaPublicKey = prefs.getString('solanaPublicKey') ?? 'solanaPublicKey-default';
+    });
+  }
+
+
+ @override
+  void initState() {
+    super.initState();
+    _loadUser();
+  }
+
   @override
   Widget build(BuildContext context) {
     final List<String> images = [
@@ -47,7 +67,7 @@ class _ProfileState extends State<Profile> {
             floating: false,
             pinned: true,
             flexibleSpace: FlexibleSpaceBar(
-              title: const Text('Filippo Passalacqua'),
+              title: Text(username),
               background: Stack(
                 fit: StackFit.expand,
                 children: [

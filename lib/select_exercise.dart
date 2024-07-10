@@ -6,7 +6,7 @@ class ExerciseSelectionPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Select Exercise'),
+        title: const Text('Select Exercise'),
       ),
       body: Center(
         child: Column(
@@ -17,33 +17,33 @@ class ExerciseSelectionPage extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => PoseDetectorView(exerciseType: 'pushup'),
+                    builder: (context) => const  PoseDetectorView(exerciseType: 'pushup'),
                   ),
                 );
               },
-              child: Text('Push-ups'),
+              child: const Text('Push-ups'),
             ),
             ElevatedButton(
               onPressed: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => PoseDetectorView(exerciseType: 'squat'),
+                    builder: (context) => const PoseDetectorView(exerciseType: 'squat'),
                   ),
                 );
               },
-              child: Text('Squats'),
+              child: const Text('Squats'),
             ),
             ElevatedButton(
               onPressed: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => PoseDetectorView(exerciseType: 'pullup'),
+                    builder: (context) => const  PoseDetectorView(exerciseType: 'pullup'),
                   ),
                 );
               },
-              child: Text('Pull-ups'),
+              child: const Text('Pull-ups'),
             ),
           ],
         ),

@@ -1,14 +1,56 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:lion_flutter/utility/global.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
+class MeResponse {
+  final String email;
+  final String firstname;
+  final String lastname;
+  final String solanaPublicKey;
+
+  MeResponse(
+      {required this.email,
+      required this.firstname,
+      required this.lastname,
+      required this.solanaPublicKey});
+
+  factory MeResponse.fromJson(Map<String, dynamic> json) {
+    return MeResponse(
+      email: json['email'],
+      firstname: json['firstname'],
+      lastname: json['lastname'],
+      solanaPublicKey: json['lastname'],
+    );
+  }
+}
 class SignUpPage extends StatelessWidget {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   static String baseUrl = Global.api;
 
+  Future<void> me(BuildContext context, String token) async {
+    final response =
+        await http.get(Uri.parse('$baseUrl/auth/me'), // Sostituisci con il tuo URL
+            headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+          'Authorization': 'Bearer $token',
+        });
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> responseBody = json.decode(response.body);
+      MeResponse responseParsed = MeResponse.fromJson(responseBody);
+      final prefs = await SharedPreferences.getInstance();
+
+      await prefs.setString('username', responseParsed.email);
+      await prefs.setString('solanaPublicKey', responseParsed.solanaPublicKey);
+      await Navigator.pushReplacementNamed(context, '/home');
+    }
+  }
   Future<void> _signUp(BuildContext context) async {
     final name = _nameController.text;
     final lastname = _nameController.text;
@@ -16,7 +58,7 @@ class SignUpPage extends StatelessWidget {
     final password = _passwordController.text;
 
     final response = await http.post(
-      Uri.parse('${baseUrl}auth/signup'), // Sostituisci con il tuo URL
+      Uri.parse('$baseUrl/auth/signup'), // Sostituisci con il tuo URL
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -28,13 +70,18 @@ class SignUpPage extends StatelessWidget {
       }),
     );
 
-    if (response.statusCode == 200) {
-      final responseBody = json.decode(response.body);
-      print('Sign-up successful: ${responseBody['user']}');
-      // Naviga alla home page o alla pagina principale dell'app
+       if (response.statusCode == 200) {
+      final Map<String, dynamic> responseBody = json.decode(response.body);
+      MeResponse responseParsed = MeResponse.fromJson(responseBody);
+          final prefs = await SharedPreferences.getInstance();
+
+      await prefs.setString('username', responseParsed.email);
+      await prefs.setString('solanaPublicKey', responseParsed.solanaPublicKey);
+      await prefs.setString('firstname', responseParsed.firstname);
+
+      await Navigator.pushReplacementNamed(context, '/home');
     } else {
-      print('Failed to sign-up: ${response.body}');
-      // Mostra un messaggio di errore
+      log('Failed to sign-up: ${response.body}');
     }
   }
 
@@ -45,7 +92,7 @@ class SignUpPage extends StatelessWidget {
         fit: StackFit.expand,
         children: [
           Image.asset(
-            'assets/static/img_3.jpg', // Assicurati di avere un'immagine in questo percorso
+            'assets/static/lion.jpg', // Assicurati di avere un'immagine in questo percorso
             fit: BoxFit.cover,
           ),
           Container(

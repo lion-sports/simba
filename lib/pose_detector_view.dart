@@ -56,7 +56,7 @@ class _PoseDetectorViewState extends State<PoseDetectorView> {
     //       builder: (BuildContext statefulBuilderContext, StateSetter setState) {
     //         _countdownTimer = Timer.periodic(Duration(seconds: 1), (Timer timer) {
     //           if (countdown == 1) {
-    //             print(context);
+    //             log(context);
     //             Navigator.of(statefulBuilderContext).pop(true);
     //             timer.cancel();
     //             _startExercise();
@@ -112,12 +112,12 @@ class _PoseDetectorViewState extends State<PoseDetectorView> {
               children: [
                 Text(
                   'Count: $_count',
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white),
+                  style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white),
                 ),
-                SizedBox(width: 20),
+                const SizedBox(width: 20),
                 Text(
                   'Time: ${_stopwatch.elapsed.inSeconds}s',
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white),
+                  style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white),
                 ),
               ],
             ),
@@ -196,7 +196,7 @@ class _PoseDetectorViewState extends State<PoseDetectorView> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Row(
+          title: const Row(
             children: [
               Icon(Icons.check_circle, color: Colors.green),
               SizedBox(width: 10),
@@ -206,7 +206,7 @@ class _PoseDetectorViewState extends State<PoseDetectorView> {
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text("You completed 5 pushups!"),
+              const Text("You completed 5 pushups!"),
               Text("Exercise: ${widget.exerciseType}"),
               Text("Time: ${_stopwatch.elapsed.inSeconds}s"),
             ],
@@ -217,7 +217,7 @@ class _PoseDetectorViewState extends State<PoseDetectorView> {
                 Navigator.of(context).pop();
                 Navigator.of(context).pop(); // Go back to the previous page
               },
-              child: Text("OK"),
+              child: const  Text("OK"),
             ),
           ],
         );

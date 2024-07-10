@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'package:http/http.dart' as http;
 import 'package:lion_flutter/utility/global.dart';
 import 'package:lion_flutter/services/apiConnector.dart';
@@ -12,7 +13,7 @@ class AuthService {
       final result = await apiConnector.post(webMethod, [ServiceParameter('token', googleToken)]);
       return result;
     } catch (e) {
-      print(e);
+      log(e.toString());
       throw Exception('Errore durante il login: $e');
     }
   }

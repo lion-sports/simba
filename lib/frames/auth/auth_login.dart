@@ -1,37 +1,47 @@
+import 'dart:developer';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:lion_flutter/frames/auth/auth_signup.dart';
 import 'package:lion_flutter/utility/global.dart';
-
-class Response {
+import 'package:shared_preferences/shared_preferences.dart';
+class LoginResponse {
   final String type;
   final String token;
+  final DateTime expiresAt;
+
+  LoginResponse(
+      {required this.type, required this.token, required this.expiresAt});
+
+  factory LoginResponse.fromJson(Map<String, dynamic> json) {
+    return LoginResponse(
+      type: json['type'],
+      token: json['token'],
+      expiresAt: DateTime.parse(json['expires_at']),
+    );
+  }
+}
+
+class MeResponse {
   final String email;
   final String firstname;
   final String lastname;
   final String solanaPublicKey;
-  final DateTime expiresAt;
 
-  Response({
-    required this.type,
-    required this.token,
-    required this.expiresAt,
-    required this.email,
-    required this.firstname,
-    required this.lastname,
-    required this.solanaPublicKey
-  });
+  MeResponse(
+      {required this.email,
+      required this.firstname,
+      required this.lastname,
+      required this.solanaPublicKey});
 
-  factory Response.fromJson(Map<String, dynamic> json) {
-    return Response(
-      type: json['type'],
-      token: json['token'],
+  factory MeResponse.fromJson(Map<String, dynamic> json) {
+    return MeResponse(
       email: json['email'],
       firstname: json['firstname'],
       lastname: json['lastname'],
       solanaPublicKey: json['solanaPublicKey'],
-      expiresAt: DateTime.parse(json['expires_at']),
     );
   }
 }
@@ -40,30 +50,48 @@ class LoginPage extends StatelessWidget {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   static String baseUrl = Global.api;
-   
-  Future<void> _login(BuildContext context) async {
-      print(context);
 
+  Future<void> me(BuildContext context, String token) async {
+    final response =
+        await http.get(Uri.parse('$baseUrl/auth/me'), // Sostituisci con il tuo URL
+            headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+          'Authorization': 'Bearer $token',
+        });
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> responseBody = json.decode(response.body);
+      MeResponse responseParsed = MeResponse.fromJson(responseBody);
+      final prefs = await SharedPreferences.getInstance();
+
+      await prefs.setString('username', responseParsed.email);
+      await prefs.setString('solanaPublicKey', responseParsed.solanaPublicKey);
+      await prefs.setString('firstname', responseParsed.firstname);
+      await Navigator.pushReplacementNamed(context, '/home');
+    }
+  }
+
+  Future<void> login(BuildContext context) async {
     final email = _emailController.text;
     final password = _passwordController.text;
 
     final response = await http.post(
-      Uri.parse('${baseUrl}auth/loginFromApp'), // Sostituisci con il tuo URL
+      Uri.parse('$baseUrl/auth/login'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
       body: jsonEncode(<String, String>{
         'email': email,
         'password': password,
-        'generateRefresh': 'true', // Aggiungi questa linea se vuoi generare un token di refresh
+        'generateRefresh':
+            'true', // Aggiungi questa linea se vuoi generare un token di refresh
       }),
     );
 
     if (response.statusCode == 200) {
-      final  Map<String, dynamic>  responseBody = json.decode(response.body);
-      Response responseParsed = Response.fromJson(responseBody);
-      Navigator.pushReplacementNamed(context, '/home');
-
+      final Map<String, dynamic> responseBody = json.decode(response.body);
+      LoginResponse responseParsed = LoginResponse.fromJson(responseBody);
+      await me(context, responseParsed.token);
     } else {
       showDialog(
         context: context,
@@ -84,7 +112,7 @@ class LoginPage extends StatelessWidget {
                 ),
                 actions: [
                   ElevatedButton(
-                    onPressed: () => _login(context),
+                    onPressed: () => login(context),
                     child: const Text("OK"),
                   ),
                 ],
@@ -93,7 +121,7 @@ class LoginPage extends StatelessWidget {
           );
         },
       );
-      print('Failed to login: ${response.body}');
+      log('Failed to login: ${response.body}');
       // Mostra un messaggio di errore
     }
   }
@@ -105,7 +133,7 @@ class LoginPage extends StatelessWidget {
         fit: StackFit.expand,
         children: [
           Image.asset(
-            'assets/static/img_3.jpg', // Assicurati di avere un'immagine in questo percorso
+            'assets/static/lion.jpg', // Assicurati di avere un'immagine in questo percorso
             fit: BoxFit.cover,
           ),
           Container(
@@ -129,7 +157,7 @@ class LoginPage extends StatelessWidget {
                   controller: _emailController,
                   decoration: InputDecoration(
                     hintText: 'Email',
-                    hintStyle: TextStyle(color: Colors.white70),
+                    hintStyle: const TextStyle(color: Colors.white70),
                     filled: true,
                     fillColor: Colors.white24,
                     border: OutlineInputBorder(
@@ -137,14 +165,14 @@ class LoginPage extends StatelessWidget {
                       borderSide: BorderSide.none,
                     ),
                   ),
-                  style: TextStyle(color: Colors.white),
+                  style: const TextStyle(color: Colors.white),
                 ),
                 const SizedBox(height: 16),
                 TextField(
                   controller: _passwordController,
                   decoration: InputDecoration(
                     hintText: 'Password',
-                    hintStyle: TextStyle(color: Colors.white70),
+                    hintStyle: const TextStyle(color: Colors.white70),
                     filled: true,
                     fillColor: Colors.white24,
                     border: OutlineInputBorder(
@@ -153,15 +181,17 @@ class LoginPage extends StatelessWidget {
                     ),
                   ),
                   obscureText: true,
-                  style: TextStyle(color: Colors.white),
+                  style: const TextStyle(color: Colors.white),
                 ),
                 const SizedBox(height: 32),
                 ElevatedButton(
-                  onPressed: () => _login(context),
+                  onPressed: () => login(context),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.teal,
-                    padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
-                    textStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 40, vertical: 20),
+                    textStyle: const TextStyle(
+                        fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                   child: const Text('Login'),
                 ),

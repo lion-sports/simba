@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:lion_flutter/services/auth/auth.service.dart';
 
@@ -30,7 +32,7 @@ class _LoginPageState extends State<LoginPage> {
     String password = '5ttkbidv';
 
     //var result =  AuthService.login(username, password);
-    //print(result);
+    //log(result);
   }
 
   @override
@@ -65,7 +67,7 @@ class _LoginPageState extends State<LoginPage> {
                 TextButton(
                   onPressed: () {
                     // Implement your reset password logic here
-                    print('Reset password');
+                    log('Reset password');
                   },
                   child: const Text('Reset Password'),
                 ),

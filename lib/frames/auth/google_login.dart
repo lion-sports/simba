@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:lion_flutter/components/navigator.dart';
@@ -26,16 +28,16 @@ class LoginGoogle extends StatelessWidget {
 
       if (response.statusCode == 200) {
         final responseBody = json.decode(response.body);
-        print('User authenticated successfully: ${responseBody['user']}');
+        log('User authenticated successfully: ${responseBody['user']}');
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => NavigatorPage()), // NavigatorPage() è la tua home page dopo il login
         );
       } else {
-        print('Failed to authenticate user: ${response.body}');
+        log('Failed to authenticate user: ${response.body}');
       }
     } catch (error) {
-      print('Error during Google Sign-In: $error');
+      log('Error during Google Sign-In: $error');
     }
   }
 

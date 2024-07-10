@@ -91,6 +91,9 @@ class LoginPage extends StatelessWidget {
     if (response.statusCode == 200) {
       final Map<String, dynamic> responseBody = json.decode(response.body);
       LoginResponse responseParsed = LoginResponse.fromJson(responseBody);
+
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('token', responseParsed.token);
       await me(context, responseParsed.token);
     } else {
       showDialog(

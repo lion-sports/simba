@@ -27,15 +27,17 @@ class MeResponse {
     );
   }
 }
+
 class SignUpPage extends StatelessWidget {
   final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _cognomeController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   static String baseUrl = Global.api;
 
   Future<void> me(BuildContext context, String token) async {
-    final response =
-        await http.get(Uri.parse('$baseUrl/auth/me'), // Sostituisci con il tuo URL
+    final response = await http
+        .get(Uri.parse('$baseUrl/auth/me'), // Sostituisci con il tuo URL
             headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
           'Authorization': 'Bearer $token',
@@ -51,9 +53,10 @@ class SignUpPage extends StatelessWidget {
       await Navigator.pushReplacementNamed(context, '/home');
     }
   }
+
   Future<void> _signUp(BuildContext context) async {
     final name = _nameController.text;
-    final lastname = _nameController.text;
+    final lastname = _cognomeController.text;
     final email = _emailController.text;
     final password = _passwordController.text;
 
@@ -70,16 +73,9 @@ class SignUpPage extends StatelessWidget {
       }),
     );
 
-       if (response.statusCode == 200) {
-      final Map<String, dynamic> responseBody = json.decode(response.body);
-      MeResponse responseParsed = MeResponse.fromJson(responseBody);
-          final prefs = await SharedPreferences.getInstance();
+    if (response.statusCode == 200) {  
 
-      await prefs.setString('username', responseParsed.email);
-      await prefs.setString('solanaPublicKey', responseParsed.solanaPublicKey);
-      await prefs.setString('firstname', responseParsed.firstname);
-
-      await Navigator.pushReplacementNamed(context, '/home');
+      await Navigator.pushReplacementNamed(context, '/login');
     } else {
       log('Failed to sign-up: ${response.body}');
     }
@@ -128,7 +124,7 @@ class SignUpPage extends StatelessWidget {
                 ),
                 const SizedBox(height: 16),
                 TextField(
-                  controller: _nameController,
+                  controller: _cognomeController,
                   decoration: InputDecoration(
                     hintText: 'Last name',
                     hintStyle: const TextStyle(color: Colors.white70),
@@ -193,8 +189,10 @@ class SignUpPage extends StatelessWidget {
                   onPressed: () => _signUp(context),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.teal,
-                    padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
-                    textStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 40, vertical: 20),
+                    textStyle: const TextStyle(
+                        fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                   child: const Text('Sign Up'),
                 ),

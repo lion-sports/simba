@@ -1,6 +1,8 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mlkit_pose_detection/google_mlkit_pose_detection.dart';
+import 'package:lion_flutter/frames/profile.dart';
+import 'package:lion_flutter/frames/rewards/rewards.dart';
 import 'dart:async';
 import 'dart:math' as math;
 import 'detector_view.dart';
@@ -214,10 +216,14 @@ class _PoseDetectorViewState extends State<PoseDetectorView> {
           actions: [
             ElevatedButton(
               onPressed: () {
-                Navigator.of(context).pop();
-                Navigator.of(context).pop(); // Go back to the previous page
+                 Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const Rewards()
+                  ),
+                );// Go back to the previous page
               },
-              child: const  Text("OK"),
+              child: const  Text("Show your rewards"),
             ),
           ],
         );
@@ -247,3 +253,4 @@ class _PoseDetectorViewState extends State<PoseDetectorView> {
     // Implement pull-up counting logic here
   }
 }
+

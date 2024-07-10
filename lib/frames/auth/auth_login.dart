@@ -83,8 +83,7 @@ class LoginPage extends StatelessWidget {
       body: jsonEncode(<String, String>{
         'email': email,
         'password': password,
-        'generateRefresh':
-            'true', // Aggiungi questa linea se vuoi generare un token di refresh
+        'generateRefresh': 'true'
       }),
     );
 

@@ -1,4 +1,12 @@
+import 'dart:developer';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:lion_flutter/frames/auth/auth_signup.dart';
+import 'package:lion_flutter/frames/rewards/rewards.dart';
+import 'package:lion_flutter/utility/global.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Profile extends StatefulWidget {
@@ -21,7 +29,7 @@ class _ProfileState extends State<Profile> {
     {
       'title': 'Collect your Rewards',
       'icon': Icons.attach_money,
-      'page': Rewards()
+      'page': const Rewards()
     },
     {
       'title': 'Refer a Friend',
@@ -30,7 +38,6 @@ class _ProfileState extends State<Profile> {
     },
   ];
 
-  
   String username = '';
   String solanaPublicKey = '';
 
@@ -38,12 +45,12 @@ class _ProfileState extends State<Profile> {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
       username = prefs.getString('username') ?? 'username-default';
-      solanaPublicKey = prefs.getString('solanaPublicKey') ?? 'solanaPublicKey-default';
+      solanaPublicKey =
+          prefs.getString('solanaPublicKey') ?? 'solanaPublicKey-default';
     });
   }
 
-
- @override
+  @override
   void initState() {
     super.initState();
     _loadUser();
@@ -78,7 +85,10 @@ class _ProfileState extends State<Profile> {
                   Container(
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
-                        colors: [Colors.black.withOpacity(0.6), Colors.transparent],
+                        colors: [
+                          Colors.black.withOpacity(0.6),
+                          Colors.transparent
+                        ],
                         begin: Alignment.bottomCenter,
                         end: Alignment.topCenter,
                       ),
@@ -173,7 +183,7 @@ class DailyQuests extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Daily Quests'),
+        title: const Text('Daily Quests'),
       ),
       body: const Center(
         child: Text('Daily Quests Page'),
@@ -187,24 +197,10 @@ class Ranking extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Check your Ranking'),
+        title: const Text('Check your Ranking'),
       ),
       body: const Center(
         child: Text('Check your Ranking Page'),
-      ),
-    );
-  }
-}
-
-class Rewards extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Collect your Rewards'),
-      ),
-      body: const Center(
-        child: Text('Collect your Rewards Page'),
       ),
     );
   }

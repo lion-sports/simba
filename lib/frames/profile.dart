@@ -1,11 +1,11 @@
 import 'dart:developer';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:lion_flutter/frames/auth/auth_signup.dart';
 import 'package:lion_flutter/frames/rewards/rewards.dart';
+import 'package:lion_flutter/frames/rewards/rewards_page_info.dart';
 import 'package:lion_flutter/utility/global.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -29,7 +29,7 @@ class _ProfileState extends State<Profile> {
     {
       'title': 'Collect your Rewards',
       'icon': Icons.attach_money,
-      'page': const Rewards()
+      'page': const RewardsInfo()
     },
     {
       'title': 'Refer a Friend',
@@ -38,8 +38,17 @@ class _ProfileState extends State<Profile> {
     },
   ];
 
+  final List<Map<String, dynamic>> _logOutitems = [
+    {
+      'title': 'Log out',
+      'icon': Icons.logout,
+    },
+  ];
+
   String username = '';
   String solanaPublicKey = '';
+  String firstName = '';
+  String token = ''; 
 
   Future<void> _loadUser() async {
     final prefs = await SharedPreferences.getInstance();
@@ -49,6 +58,87 @@ class _ProfileState extends State<Profile> {
           prefs.getString('solanaPublicKey') ?? 'solanaPublicKey-default';
     });
   }
+  
+  // String level = '';
+  // String pushups = '';
+  // String kcal = '';
+  // String trainingTime = '';
+
+  // String birthdate = '';
+  // String gender = '';
+  // String height = '';
+  // String weight = '';
+
+  // int exercisePushUpsCount = 0;
+  // int exercisePushUpsCountTotal = 0;
+  // int exerciseTime = 0;
+
+  // int totalTokens = 0;
+
+  Future<void> _logoutDialog() async {
+    //final prefs = await SharedPreferences.getInstance();
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Logout'),
+          content: const Text(
+            'If you log out your fitness data will be lost.\n'
+            'Do you want to logout?\n',
+          ),
+          actions: <Widget>[
+            TextButton(
+              style: TextButton.styleFrom(
+                textStyle: Theme.of(context).textTheme.labelLarge,
+              ),
+              child: const Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              style: TextButton.styleFrom(
+                textStyle: Theme.of(context).textTheme.labelLarge,
+              ),
+              child: const Text('Logout'),
+              onPressed: () {
+                _logOut();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _logOut() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('token');
+    await prefs.remove('username');
+    await prefs.remove('solanaPublicKey');
+    await prefs.remove('firstname');
+
+    await prefs.remove('birthdate');
+    await prefs.remove('gender');    
+    await prefs.remove('height');    
+    await prefs.remove('weight');    
+    
+    await prefs.remove('level');
+    await prefs.remove('pushUps');    
+    await prefs.remove('kcal');    
+    await prefs.remove('trainingTime');
+
+    await prefs.remove('exercisePushUpsCount');
+    await prefs.remove('exercisePushUpsCountTotal');
+    await prefs.remove('exerciseTime');
+    await prefs.remove('lastReset');
+    
+    await prefs.remove('totalTokens');    
+    
+    Navigator.pushReplacementNamed(context, '/login');
+  }
+    
+  // }
 
   @override
   void initState() {
@@ -74,7 +164,7 @@ class _ProfileState extends State<Profile> {
             floating: false,
             pinned: true,
             flexibleSpace: FlexibleSpaceBar(
-              title: Text(username),
+              title: const Text('Profile'),
               background: Stack(
                 fit: StackFit.expand,
                 children: [
@@ -88,6 +178,7 @@ class _ProfileState extends State<Profile> {
                         colors: [
                           Colors.black.withOpacity(0.6),
                           Colors.transparent
+                          //Colors.blue.withOpacity(0.6),
                         ],
                         begin: Alignment.bottomCenter,
                         end: Alignment.topCenter,
@@ -110,9 +201,9 @@ class _ProfileState extends State<Profile> {
                       backgroundImage: AssetImage('assets/static/img_2.jpg'),
                     ),
                     const SizedBox(height: 16),
-                    const Text(
-                      'Basketball player',
-                      style: TextStyle(
+                    Text(
+                      '${username}',
+                      style: const TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
                       ),
@@ -167,6 +258,38 @@ class _ProfileState extends State<Profile> {
                         },
                       ),
                     ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: _logOutitems.map((item) {
+                        return ListTile(
+                          leading: Icon(item['icon']),
+                          title: Text(item['title']),
+                          trailing: const Icon(Icons.arrow_forward_ios),
+                          onTap: () => _logoutDialog(),
+                          // onTap: () {
+                          //   Navigator.push(
+                          //     context,
+                          //     MaterialPageRoute(
+                          //         builder: (context) => item['page']),
+                          //   );
+                          // },
+                        );
+                      }).toList(),
+                    ),
+                    // const SizedBox(height: 16),
+                    // Center(
+                    //   child: ElevatedButton(
+                    //     onPressed: _logoutDialog,
+                    //     child: const Text('Logout'),
+                    //     style: ElevatedButton.styleFrom(
+                    //       backgroundColor: Colors.red,
+                    //       padding: const EdgeInsets.symmetric(
+                    //           horizontal: 40, vertical: 20),
+                    //       textStyle: const TextStyle(
+                    //           fontSize: 18, fontWeight: FontWeight.bold),
+                    //     ),
+                    //   ),
+                    // ),
                   ],
                 ),
               ),

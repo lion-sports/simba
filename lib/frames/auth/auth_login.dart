@@ -1,12 +1,11 @@
 import 'dart:developer';
-
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:lion_flutter/frames/auth/auth_signup.dart';
 import 'package:lion_flutter/utility/global.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 class LoginResponse {
   final String type;
   final String token;
@@ -52,12 +51,13 @@ class LoginPage extends StatelessWidget {
   static String baseUrl = Global.api;
 
   Future<void> me(BuildContext context, String token) async {
-    final response =
-        await http.get(Uri.parse('$baseUrl/auth/me'), // Sostituisci con il tuo URL
-            headers: <String, String>{
-          'Content-Type': 'application/json; charset=UTF-8',
-          'Authorization': 'Bearer $token',
-        });
+    final response = await http.get(
+      Uri.parse('$baseUrl/auth/me'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': 'Bearer $token',
+      },
+    );
 
     if (response.statusCode == 200) {
       final Map<String, dynamic> responseBody = json.decode(response.body);
@@ -67,7 +67,17 @@ class LoginPage extends StatelessWidget {
       await prefs.setString('username', responseParsed.email);
       await prefs.setString('solanaPublicKey', responseParsed.solanaPublicKey);
       await prefs.setString('firstname', responseParsed.firstname);
-      await Navigator.pushReplacementNamed(context, '/home');
+      
+      final hasPersonalData = prefs.getString('weight') != null &&
+                              prefs.getString('height') != null &&
+                              prefs.getString('gender') != null &&
+                              prefs.getString('birthdate') != null;
+
+      if (hasPersonalData) {
+        await Navigator.pushReplacementNamed(context, '/home');
+      } else {
+        await Navigator.pushReplacementNamed(context, '/customize_fitness');
+      }
     }
   }
 
@@ -190,10 +200,8 @@ class LoginPage extends StatelessWidget {
                   onPressed: () => login(context),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.teal,
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 40, vertical: 20),
-                    textStyle: const TextStyle(
-                        fontSize: 18, fontWeight: FontWeight.bold),
+                    padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
+                    textStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                   child: const Text('Login'),
                 ),

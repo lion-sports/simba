@@ -1,8 +1,10 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mlkit_pose_detection/google_mlkit_pose_detection.dart';
+import 'package:lion_flutter/frames/home/home.dart';
 import 'package:lion_flutter/frames/profile.dart';
 import 'package:lion_flutter/frames/rewards/rewards.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:async';
 import 'dart:math' as math;
 import 'detector_view.dart';
@@ -19,13 +21,12 @@ class PoseDetectorView extends StatefulWidget {
 
 class _PoseDetectorViewState extends State<PoseDetectorView> {
   final PoseDetector _poseDetector = PoseDetector(options: PoseDetectorOptions());
-  bool _canProcess = false; // Initially false to prevent processing before countdown
+  bool _canProcess = false;
   bool _isBusy = false;
   CustomPaint? _customPaint;
   String? _text;
   var _cameraLensDirection = CameraLensDirection.back;
 
-  // Variables for exercise counting
   int _count = 0;
   bool _isInDownPosition = false;
   late Stopwatch _stopwatch;
@@ -48,38 +49,6 @@ class _PoseDetectorViewState extends State<PoseDetectorView> {
 
   void _showCountdownDialog() {
     _startExercise();
-    // int countdown = 3;
-
-    // showDialog(
-    //   context: context,
-    //   barrierDismissible: false,
-    //   builder: (BuildContext context) {
-    //     return StatefulBuilder(
-    //       builder: (BuildContext statefulBuilderContext, StateSetter setState) {
-    //         _countdownTimer = Timer.periodic(Duration(seconds: 1), (Timer timer) {
-    //           if (countdown == 1) {
-    //             log(context);
-    //             Navigator.of(statefulBuilderContext).pop(true);
-    //             timer.cancel();
-    //             _startExercise();
-    //           } else {
-    //             setState(() {
-    //               countdown--;
-    //             });
-    //           }
-    //         });
-    //         return AlertDialog(
-    //           title: Text("Get Ready!", textAlign: TextAlign.center),
-    //           content: Text(
-    //             "$countdown",
-    //             style: TextStyle(fontSize: 48, fontWeight: FontWeight.bold),
-    //             textAlign: TextAlign.center,
-    //           ),
-    //         );
-    //       },
-    //     );
-    //   },
-    // );
   }
 
   void _startExercise() {
@@ -93,8 +62,8 @@ class _PoseDetectorViewState extends State<PoseDetectorView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Pose Detector'),
-        backgroundColor: Colors.deepPurple,
+        title: const Text('Pose Detector'),
+        backgroundColor: const Color(0x358CC2),
       ),
       body: Stack(
         children: [
@@ -166,7 +135,6 @@ class _PoseDetectorViewState extends State<PoseDetectorView> {
 
   void _countPushUps(List<Pose> poses) {
     for (Pose pose in poses) {
-      // Keep track of shoulders, elbows, and wrists for both left and right
       final leftShoulder = pose.landmarks[PoseLandmarkType.leftShoulder];
       final rightShoulder = pose.landmarks[PoseLandmarkType.rightShoulder];
       final leftElbow = pose.landmarks[PoseLandmarkType.leftElbow];
@@ -178,7 +146,6 @@ class _PoseDetectorViewState extends State<PoseDetectorView> {
         final leftElbowAngle = calculateAngle(leftShoulder, leftElbow, leftWrist);
         final rightElbowAngle = calculateAngle(rightShoulder, rightElbow, rightWrist);
 
-        // Use angles to determine position
         if (!_isInDownPosition && leftElbowAngle < 90 && rightElbowAngle < 90) {
           _isInDownPosition = true;
         } else if (_isInDownPosition && leftElbowAngle > 160 && rightElbowAngle > 160) {
@@ -194,6 +161,7 @@ class _PoseDetectorViewState extends State<PoseDetectorView> {
 
   void _showSuccessDialog() {
     _stopwatch.stop();
+    _saveExerciseData();
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -208,35 +176,74 @@ class _PoseDetectorViewState extends State<PoseDetectorView> {
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Text("You completed 5 pushups!"),
+              Text("You completed ${_count.toString()} pushups!"),
               Text("Exercise: ${widget.exerciseType}"),
-              Text("Time: ${_stopwatch.elapsed.inSeconds}s"),
+              Text("Time: ${_stopwatch.elapsed.inMinutes}minutes"),
             ],
           ),
-          actions: [
-            ElevatedButton(
+          actions: <Widget>[
+            TextButton(
+              style: TextButton.styleFrom(
+                textStyle: Theme.of(context).textTheme.labelLarge,
+              ),
+              child: const Text('Cancel & go to homepage'),
               onPressed: () {
-                 Navigator.push(
+                Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const Rewards()
+                    builder: (context) => const  Home(title: 'HomePage', selectedLevel: 'Easy'),
                   ),
-                );// Go back to the previous page
+                );
               },
-              child: const  Text("Show your rewards"),
             ),
+            TextButton(
+              style: TextButton.styleFrom(
+                textStyle: Theme.of(context).textTheme.labelLarge,
+              ),
+              child: const Text('Show & get your rewards'),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                    MaterialPageRoute(
+                      builder: (context) => const Rewards(),
+                    ),
+                );
+              },
+            ),
+            // ElevatedButton(
+            //   onPressed: () {
+            //     Navigator.push(
+            //       context,
+            //       MaterialPageRoute(
+            //         builder: (context) => const Rewards(),
+            //       ),
+            //     );
+            //   },
+            //   child: const Text("Show your rewards"),
+            // ),
           ],
         );
       },
     );
   }
 
+  Future<void> _saveExerciseData() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt('exercisePushUpsCount', _count);
+    int pushUpsCount = prefs.getInt('exercisePushUpsCount') ?? 0;
+    int exerciseTime = prefs.getInt('exerciseTime') ?? 0;
+
+    await prefs.setInt('exercisePushUpsCountTotal', pushUpsCount + _count);
+    await prefs.setInt('exerciseTime', exerciseTime + _stopwatch.elapsed.inMinutes);
+
+    print("exerciseTime.toString()");
+    print(exerciseTime.toString());
+
+  }
+
   double calculateAngle(PoseLandmark firstLandmark, PoseLandmark midLandmark, PoseLandmark lastLandmark) {
-    // Calculate angle in radians
     double radians = math.atan2(lastLandmark.y - midLandmark.y, lastLandmark.x - midLandmark.x) -
         math.atan2(firstLandmark.y - midLandmark.y, firstLandmark.x - midLandmark.x);
-
-    // Convert radians to degrees
     double degrees = radians * 180.0 / math.pi;
     degrees = degrees.abs();
     if (degrees > 180.0) {
@@ -253,4 +260,3 @@ class _PoseDetectorViewState extends State<PoseDetectorView> {
     // Implement pull-up counting logic here
   }
 }
-

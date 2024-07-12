@@ -5,6 +5,8 @@ import 'package:lion_flutter/frames/settings.dart';
 import 'package:lion_flutter/pose_detector_view.dart';
 import 'package:lion_flutter/frames/auth/auth_login.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:lion_flutter/frames/exercise/settings_exercise.dart';
+import 'package:lion_flutter/components/countdownShowDialog.dart';
 
 class Home extends StatefulWidget {
   final String selectedLevel;
@@ -35,11 +37,25 @@ class _HomeState extends State<Home> {
     });
   }
 
+  Future<void> _checkAndResetDailyData() async {
+    final prefs = await SharedPreferences.getInstance();
+    final lastReset = prefs.getString('lastReset') ?? '';
+    final today = DateTime.now().toString().split(' ')[0]; // YYYY-MM-DD
+
+    if (lastReset != today) {
+      await prefs.setInt('exercisePushUpsCountTotal', 0);
+      await prefs.setInt('exerciseTime', 0);
+      await prefs.setString('lastReset', today);
+    }
+  }
+
+
   @override
   void initState() {
     super.initState();
     selectedLevel = widget.selectedLevel;
     _loadUser();
+    _checkAndResetDailyData();
   }
 
   void _onItemTapped(int index) {
@@ -60,14 +76,14 @@ class _HomeState extends State<Home> {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => LoginPage(),
+          builder: (context) => const SettingsExercise(),
         ),
       );
     } else if (index == 2) {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => Settings(selectedLevelSettings: selectedLevel),
+          builder: (context) => const Profile(title: 'Profile'),
         ),
       );
     } else if (index == 3) {
@@ -94,7 +110,8 @@ class _HomeState extends State<Home> {
 
   Color _getSelectedColor() {
     if (selectedLevel == 'Easy') {
-      return const Color.fromARGB(255, 130, 192, 132);
+      //return const Color.fromARGB(255, 130, 192, 132);
+      return const Color(0xFF358CC2);
     } else if (selectedLevel == 'Normal') {
       return const Color.fromARGB(255, 73, 118, 155);
     } else {
@@ -118,7 +135,7 @@ class _HomeState extends State<Home> {
             context,
             MaterialPageRoute(
               builder: (context) =>
-                  const PoseDetectorView(exerciseType: 'pushup'),
+                  const CountdownShowDialog(exerciseType: 'pushup')
             ),
           );
         },
@@ -189,13 +206,13 @@ class _HomeState extends State<Home> {
             label: 'Exercises',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.settings,
+            icon: Icon(Icons.account_circle,
                 color: Theme.of(context).textTheme.headlineLarge?.color),
-            label: 'Settings',
+            label: 'Account',
           ),
         ],
         currentIndex: _selectedIndex,
-        selectedItemColor: Colors.teal,
+        selectedItemColor: const Color(0xFF358CC2),
         unselectedItemColor: Theme.of(context).textTheme.headlineLarge?.color,
         onTap: _onItemTapped,
       ),
@@ -209,42 +226,44 @@ class _HomeState extends State<Home> {
               Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
                 Flexible(
                   child: Text(
-                    'Welcome $firstname on Lion Sport',
+                    'Welcome $firstname\n' 
+                    'on Lion Sport',
                     style: TextStyle(
-                        fontSize: 20,
+                        fontSize: 32,
+                        
                         color:
                             Theme.of(context).textTheme.headlineLarge?.color),
                   ),
                 ),
-                IconButton(
-                  icon: Icon(Icons.account_circle,
-                      color: Theme.of(context).iconTheme.color, size: 30),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const Profile(title: 'Profile'),
-                      ),
-                    );
-                  },
-                ),
+                // IconButton(
+                //   icon: Icon(Icons.account_circle,
+                //       color: Theme.of(context).iconTheme.color, size: 80),
+                //   onPressed: () {
+                //     Navigator.push(
+                //       context,
+                //       MaterialPageRoute(
+                //         builder: (context) => const Profile(title: 'Profile'),
+                //       ),
+                //     );
+                //   },
+                // ),
               ]),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Flexible(
-                    child: Text(
-                      'Your solana public key is $solanaPublicKey',
-                      style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                          color:
-                              Theme.of(context).textTheme.headlineLarge?.color),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 20),
+              // Row(
+              //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //   children: [
+              //     Flexible(
+              //       child: Text(
+              //         'Your solana public key is $solanaPublicKey',
+              //         style: TextStyle(
+              //             fontSize: 14,
+              //             fontWeight: FontWeight.bold,
+              //             color:
+              //                 Theme.of(context).textTheme.headlineLarge?.color),
+              //       ),
+              //     ),
+              //   ],
+              // ),
+              // const SizedBox(height: 20),
               // CarouselSlider(
               //   options: CarouselOptions(
               //     height: 200.0,

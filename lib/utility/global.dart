@@ -1,3 +1,3 @@
 class Global {
-  static const String api = 'http://192.168.1.19:3337';
+  static const String api = 'https://api-lionsport.likablehair.it';
 }
